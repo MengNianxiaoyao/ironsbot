@@ -371,7 +371,6 @@ dependencies = [
     { name = "nonebot-plugin-htmlkit" },
     { name = "nonebot-plugin-localstore" },
     { name = "nonebot-plugin-send-anything-anywhere" },
-    { name = "nonebot-plugin-treehelp" },
     { name = "nonebot2", extra = ["fastapi", "httpx"] },
     { name = "seerapi" },
     { name = "seerapi-models" },
@@ -399,7 +398,6 @@ requires-dist = [
     { name = "nonebot-plugin-htmlkit", specifier = ">=0.1.0rc5" },
     { name = "nonebot-plugin-localstore", specifier = ">=0.7.4" },
     { name = "nonebot-plugin-send-anything-anywhere", specifier = ">=0.7.1" },
-    { name = "nonebot-plugin-treehelp", specifier = ">=0.5.0" },
     { name = "nonebot2", extras = ["fastapi", "httpx"], specifier = ">=2.4.4" },
     { name = "ruff", marker = "extra == 'dev'" },
     { name = "seerapi", specifier = ">=105.1.0" },
@@ -846,18 +844,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/67/73/821d35051fd98f7ccf499dec85c4b8a3e8d916aeef989371b8d793167abd/nonebot_plugin_send_anything_anywhere-0.7.1.tar.gz", hash = "sha256:ec9c7ba59c824238b812950146a894acc88ca8da98f500de15217feebcd5e868", size = 34304, upload-time = "2024-08-17T14:10:54.058Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bd/de/39c3a1810c2b25239fe43ea68bced88a9ccadc693b132d5a42d6e25c9134/nonebot_plugin_send_anything_anywhere-0.7.1-py3-none-any.whl", hash = "sha256:b52044272be9a7bc77bd7a53ef700481c071fd4e889ae21a0411d0df22d13c16", size = 47405, upload-time = "2024-08-17T14:10:52.602Z" },
-]
-
-[[package]]
-name = "nonebot-plugin-treehelp"
-version = "0.5.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "nonebot2" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/3e/77/7df55fc399d805f0b2fc6755a802f5266987b5689e64456ee87f8af81efb/nonebot_plugin_treehelp-0.5.0.tar.gz", hash = "sha256:fc9ded8ec871e0a70664eb1c3cc6125be79fe19d124cd098f25afb3e3bc43b16", size = 7081, upload-time = "2024-07-13T04:41:42.327Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/4f/f4/52f47a979d8f1a7b49e84aaa014c67a6d02f2a9629d034a7847993cd70f5/nonebot_plugin_treehelp-0.5.0-py3-none-any.whl", hash = "sha256:e9b594f6c7396fccb3053656d7618c40d589c3cc995628237091a543b9e552b9", size = 7404, upload-time = "2024-07-13T04:41:40.905Z" },
 ]
 
 [[package]]
