@@ -47,7 +47,7 @@ class ClientManager:
             await game.login()
             logger.info(f"无头客户端已登录，米米号: {user_id}")
         except Exception:
-            if reconnect_retries > 0:
+            if reconnect_retries != 0:
                 logger.opt(exception=True).warning(
                     "无头客户端初始登录失败，将尝试自动重连"
                 )

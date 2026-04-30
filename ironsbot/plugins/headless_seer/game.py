@@ -259,7 +259,7 @@ class SeerGame:
 
     def schedule_reconnect(self) -> None:
         """触发自动重连。若重连任务已在运行或未启用重连则跳过。"""
-        if self._reconnect_retries <= 0:
+        if self._reconnect_retries == 0:
             return
         if self._reconnect_task is not None and not self._reconnect_task.done():
             logger.debug(f"{self.user_id}：重连任务已在运行，跳过")
@@ -267,13 +267,20 @@ class SeerGame:
         self._reconnect_task = asyncio.create_task(self._auto_reconnect())
 
     async def _auto_reconnect(self) -> None:
-        """带指数退避的游戏级自动重连，重新执行完整登录流程。"""
+        """带指数退避的游戏级自动重连，重新执行完整登录流程。
+
+        reconnect_retries < 0 时无限重试，> 0 时重试指定次数。
+        """
         assert self._password is not None and self._login_server_url is not None
         delay = self._reconnect_delay
-        for attempt in range(1, self._reconnect_retries + 1):
+        infinite = self._reconnect_retries < 0
+        attempt = 0
+        while infinite or attempt < self._reconnect_retries:
+            attempt += 1
+            retries_label = "∞" if infinite else str(self._reconnect_retries)
             logger.info(
                 f"{self.user_id}：将在 {delay:.1f}s 后尝试重连 "
-                f"({attempt}/{self._reconnect_retries})"
+                f"({attempt}/{retries_label})"
             )
 
             try:
@@ -287,7 +294,7 @@ class SeerGame:
                 return
             except Exception:
                 logger.opt(exception=True).warning(
-                    f"{self.user_id}：重连失败 ({attempt}/{self._reconnect_retries})"
+                    f"{self.user_id}：重连失败 ({attempt}/{retries_label})"
                 )
             else:
                 logger.info(f"{self.user_id}：重连成功")
