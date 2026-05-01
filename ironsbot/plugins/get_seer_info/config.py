@@ -13,6 +13,7 @@ class Config(BaseModel):
     alias_local_path: str = "aliases-data.sqlite"
     render_cache_dir: Path | None = None
     render_cache_max_size_mb: int = 200
+    render_cache_clear_on_startup: bool = True
 
 
 plugin_config = get_plugin_config(Config)

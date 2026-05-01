@@ -1,7 +1,7 @@
 import hashlib
 from pathlib import Path
 
-from nonebot import require
+from nonebot import get_driver, require
 from nonebot.log import logger
 from seerapi_models import ApiMetadataORM
 from sqlmodel import Session as SQLModelSession
@@ -11,6 +11,8 @@ from ..config import plugin_config
 
 require("ironsbot.plugins.db_sync")
 require("nonebot_plugin_localstore")
+
+config = get_driver().config
 
 import nonebot_plugin_localstore as store
 
@@ -101,6 +103,14 @@ class RenderCache:
         if removed:
             logger.info(f"渲染缓存清理: 删除 {removed} 个文件")
 
+    def clear(self) -> None:
+        """删除缓存目录下的所有缓存文件。"""
+        files = [f for f in self._cache_dir.iterdir() if f.is_file()]
+        for f in files:
+            f.unlink(missing_ok=True)
+        if files:
+            logger.info(f"渲染缓存清空: 删除 {len(files)} 个文件")
+
     @property
     def total_size(self) -> int:
         """当前缓存目录总大小（bytes）。"""
@@ -111,3 +121,6 @@ render_cache: RenderCache = RenderCache(
     cache_dir=CACHE_DIR,
     max_size_bytes=plugin_config.render_cache_max_size_mb * 1024 * 1024,
 )
+
+if plugin_config.render_cache_clear_on_startup:
+    render_cache.clear()
