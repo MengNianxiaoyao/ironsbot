@@ -3,12 +3,16 @@ from collections.abc import Callable
 from typing import Any, Literal, NamedTuple, TypedDict
 
 from nonebot_plugin_htmlkit import template_to_pic
-from seerapi_models import PetORM, SkillInPetORM, SoulmarkORM
+from seerapi_models import MintmarkORM, PetORM, SkillInPetORM, SoulmarkORM
+from seerapi_models.mintmark import PetMintmarkLink, SkillMintmarkLink
+from sqlalchemy.orm import object_session
+from sqlmodel import col, select
 
 from ironsbot.utils.analyze_parser import AnalyzeDescParser
 
 from ..depends.image import (
     ElementTypeImageGetter,
+    MintmarkBodyImageGetter,
     PetBodyImageGetter,
     PetHeadImageGetter,
 )
@@ -22,6 +26,14 @@ STAT_MAX_VALUE = 200
 _ANALYZE_DESC_STYLES: dict[str, Callable[..., str]] = {
     "#f35555": lambda t: f'<b style="color:#60e0ff">{t}</b>',
 }
+
+
+class MintMarkDict(TypedDict):
+    id: int
+    name: str
+    desc: str
+    icon: str
+    skills: list[str]
 
 
 class SkillDict(TypedDict):
@@ -186,21 +198,67 @@ async def render_pet_info(pet: PetORM) -> bytes:
             level_skills.append(skill)
 
     level_skills.sort(key=lambda s: s["learning_level"] or 0, reverse=True)
-
+    skill_ids = [sl.skill_id for sl in pet.skill_links]
+    session = object_session(pet)
+    assert session is not None
+    stmt = (
+        select(MintmarkORM)
+        .outerjoin(
+            SkillMintmarkLink,
+            col(SkillMintmarkLink.mintmark_id) == col(MintmarkORM.id),
+        )
+        .outerjoin(
+            PetMintmarkLink,
+            col(PetMintmarkLink.mintmark_id) == col(MintmarkORM.id),
+        )
+        .where(
+            col(SkillMintmarkLink.skill_id).in_(skill_ids)
+            | (col(PetMintmarkLink.pet_id) == pet.id)
+        )
+        .where(
+            col(PetMintmarkLink.pet_id).is_(None)
+            | (col(PetMintmarkLink.pet_id) == pet.id)
+        )
+        .distinct()
+    )
+    mintmarks = session.execute(stmt).scalars().all()
+    pet_skill_names = {s["name"] for s in all_skills}
     type_ids = list({skill["type_id"] for skill in all_skills} | {pet.type.id})
 
-    pet_head_bytes, pet_body_bytes, *type_icon_results = await asyncio.gather(
+    (
+        pet_head_bytes,
+        pet_body_bytes,
+        *rest_results,
+    ) = await asyncio.gather(
         PetHeadImageGetter.get_bytes(str(pet.resource_id)),
         PetBodyImageGetter.get_bytes(str(pet.resource_id)),
         *(ElementTypeImageGetter.get_bytes(str(tid)) for tid in type_ids),
         ElementTypeImageGetter.get_bytes("prop"),
+        *(MintmarkBodyImageGetter.get_bytes(str(mm.id)) for mm in mintmarks),
     )
+
+    type_icon_count = len(type_ids) + 1  # +1 for "prop"
+    type_icon_results = rest_results[:type_icon_count]
+    mm_icon_results = rest_results[type_icon_count:]
 
     type_icons: dict[int | str, str] = {
         tid: to_data_uri(data)
         for tid, data in zip(type_ids, type_icon_results[:-1], strict=True)
     }
     type_icons["prop"] = to_data_uri(type_icon_results[-1])
+
+    skill_marks: list[MintMarkDict] = [
+        MintMarkDict(
+            id=mm.id,
+            name=mm.name,
+            desc=mm.desc,
+            icon=to_data_uri(icon_bytes),
+            skills=list(
+                dict.fromkeys(s.name for s in mm.skill if s.name in pet_skill_names)
+            ),
+        )
+        for mm, icon_bytes in zip(mintmarks, mm_icon_results, strict=True)
+    ]
 
     result = await template_to_pic(
         template_path=TEMPLATE_PATH,
@@ -218,6 +276,7 @@ async def render_pet_info(pet: PetORM) -> bytes:
             "stats": stats,
             "advance_stats": advance_stats,
             "soulmarks": soulmarks,
+            "skill_marks": skill_marks,
             "fifth_skills": fifth_skills[::-1],
             "advanced_skills": advanced_skills[::-1],
             "special_skills": special_skills[::-1],

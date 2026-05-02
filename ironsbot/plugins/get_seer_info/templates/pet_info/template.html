@@ -210,6 +210,66 @@
             color: #e0f0ff;
         }
 
+        /* ========== 刻印卡片 ========== */
+        .mm-item {
+            background-color: #2a5a9a;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #60e0ff;
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .mm-icon {
+            width: 56px;
+            height: 56px;
+            flex-shrink: 0;
+            border-radius: 4px;
+            /* border: 1px solid rgba(255, 255, 255, 0.15); */
+        }
+
+        .mm-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mm-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #60e0ff;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .mm-desc {
+            font-size: 16px;
+            color: #e0f0ff;
+            line-height: 1.6;
+        }
+
+        .mm-skill-tags {
+            display: inline-flex;
+            gap: 5px;
+            margin-left: 8px;
+        }
+
+        .mm-skill-tag {
+            display: inline-block;
+            padding: 1px 8px;
+            font-size: 13px;
+            font-weight: normal;
+            color: #ffffff;
+            background-color: #3a6aaa;
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
         /* ========== 通用标签 ========== */
         .tag {
             display: inline-block;
@@ -596,6 +656,30 @@
                                 {% endfor %}
                             </div>
                             {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if skill_marks %}
+                    <div class="section">
+                        <div class="sec-title">刻印</div>
+                        {% for mm in skill_marks %}
+                        <div class="mm-item">
+                            <img class="mm-icon" src="{{ mm.icon }}" />
+                            <div class="mm-content">
+                                <div class="mm-name">
+                                    {{ mm.name }}
+                                    {% if mm.skills %}
+                                    <span class="mm-skill-tags">
+                                        {% for sk in mm.skills %}
+                                        <span class="mm-skill-tag">{{ sk }}</span>
+                                        {% endfor %}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <div class="mm-desc">{{ mm.desc }}</div>
+                            </div>
                         </div>
                         {% endfor %}
                     </div>

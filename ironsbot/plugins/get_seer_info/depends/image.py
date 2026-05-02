@@ -34,6 +34,7 @@ MintmarkBodyImageGetter = GetImage(
     "https://newseer.61.com/web/countermark/icon/{}.png",
     "https://cnb.cool/SeerAPI/seer-unity-assets/-/git/raw/main/newseer/assets/art/ui/assets/countermark/icon/{}.png",
     "https://raw.githubusercontent.com/SeerAPI/seer-unity-assets/refs/heads/main/newseer/assets/art/ui/assets/countermark/icon/{}.png",
+    fallback=_fallback_image,
 )
 MintmarkBodyImage = Depends(MintmarkBodyImageGetter)
 
