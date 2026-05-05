@@ -10,7 +10,9 @@
 
 > 本项目原作是 [**@火火**] 开发的西塔伦Bot，谨以此项目向 [**@火火**] 致敬，感谢他为赛尔号玩家社区所做的贡献，愿火种永存。
 > 
-> 本项目继承了西塔伦Bot的数据查询功能，不包含配置投稿/推荐功能，这些功能请查看[这个链接]()获取更多信息。
+> 本项目继承了西塔伦Bot的数据查询功能，不包含配置投稿/推荐功能，这些功能请查看[这个链接（目前还没有）]()获取更多信息。
+>
+> 本项目headless_seer插件的登录部分参考了 [@oldml](https://github.com/oldml) 的项目 [saixiaoxi](https://github.com/oldml/saixiaoxi) 在此表示感谢。
 
 ## 部署
 与西塔伦Bot不同，本项目不提供托管服务，用户需要自行部署。
@@ -122,7 +124,7 @@ ws://ironsbot:8080/onebot/v11/ws
 本项目采用 GPL-3.0 协议，请遵守协议内容。
 
 ## ❤️ 特别鸣谢
-
+- [@oldml](https://github.com/oldml)
 - [@聿聿](https://github.com/WhY15w)
 - [@火火](https://github.com/Yogurt114514)
 - [@星空](https://github.com/sptsaixiaoxi)
