@@ -1,22 +1,10 @@
 from collections.abc import Awaitable, Callable
 
-from hishel.httpx import AsyncCacheClient
-from httpx import HTTPStatusError, RequestError
+from httpx import AsyncClient, HTTPStatusError, RequestError
 from nonebot.params import Depends
 from nonebot_plugin_saa import Image, MessageSegmentFactory, Text
 
 from .parse_arg import parse_string_arg
-
-
-async def fetch_image_bytes(url: str) -> bytes:
-    async with AsyncCacheClient() as client:
-        response = await client.get(url)
-        response.raise_for_status()
-        return response.content
-
-
-async def create_image_segment_from_url(url: str) -> Image:
-    return Image(await fetch_image_bytes(url))
 
 
 class GetImage:
@@ -24,11 +12,26 @@ class GetImage:
         self,
         *url_templates: str,
         fallback: Callable[[Exception], Awaitable[bytes]] | None = None,
+        client_getter: Callable[[], AsyncClient],
     ) -> None:
         if not url_templates:
             raise ValueError("至少需要一个 URL 模板")
+
+        self._client_getter = client_getter
         self.url_templates = url_templates
         self.fallback = fallback
+
+    async def _fetch_image_bytes(self, url: str) -> bytes:
+        response = await self.client.get(url)
+        response.raise_for_status()
+        return response.content
+
+    @property
+    def client(self) -> AsyncClient:
+        return self._client_getter()
+
+    async def _create_image_segment_from_url(self, url: str) -> Image:
+        return Image(await self._fetch_image_bytes(url))
 
     async def get_bytes(self, arg: str) -> bytes:
         """获取图片原始字节，依次尝试所有 URL 模板。"""
@@ -36,7 +39,7 @@ class GetImage:
         for template in self.url_templates:
             url = template.format(arg)
             try:
-                return await fetch_image_bytes(url)
+                return await self._fetch_image_bytes(url)
             except (HTTPStatusError, RequestError) as e:
                 last_error = e
                 continue
@@ -50,7 +53,7 @@ class GetImage:
         for template in self.url_templates:
             url = template.format(arg)
             try:
-                return await create_image_segment_from_url(url)
+                return await self._create_image_segment_from_url(url)
             except (HTTPStatusError, RequestError) as e:
                 last_error = e
                 continue
