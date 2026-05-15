@@ -5,11 +5,19 @@ from nonebot.params import Depends
 from nonebot.typing import T_State
 from nonebot_plugin_saa import Image, MessageFactory
 from seerapi_models import PetORM, PetSkinORM
+from sqlmodel import select
 
 from ironsbot.utils.parse_arg import parse_string_arg
 from ironsbot.utils.rule import no_reply, startswith_or_endswith
 
-from ..depends import GetPetData, GetPetSkinData, PetBodyImageGetter, PetDataGetter
+from ..depends import (
+    GetPetData,
+    GetPetSkinData,
+    PetBodyImageGetter,
+    PetDataGetter,
+    SeerAPISession,
+)
+from ..depends.db import SQLModelSession
 from ..group import matcher_group
 from ..prompt import (
     Prompt,
@@ -31,7 +39,8 @@ PROMPT_MAX_ITEMS = 20
 
 
 def _create_prompt_items(
-    pets: tuple[PetORM, ...], skins: tuple[PetSkinORM, ...]
+    pets: tuple[PetORM, ...] = GetPetData(),
+    skins: tuple[PetSkinORM, ...] = GetPetSkinData(),
 ) -> list[PromptItem[int]]:
     id_set: set[int] = set()
     prompt_items: list[PromptItem[int]] = []
@@ -72,24 +81,22 @@ async def handle_pet_image(
     matcher: Matcher,
     state: T_State,
     event: Event,
+    session: SeerAPISession,
     arg: str = Depends(parse_string_arg),
-    pets: tuple[PetORM, ...] = GetPetData(),
-    skins: tuple[PetSkinORM, ...] = GetPetSkinData(),
+    items: list[PromptItem[int]] = Depends(_create_prompt_items),
 ) -> None:
-    items: list[PromptItem[int]] = _create_prompt_items(pets, skins)
-
     if not items:
         raise FinishedException
 
     if len(items) == 1:
-        msg = await build_pet_image_message(items[0])
+        msg = await build_pet_image_message(items[0], session)
         await msg.finish()
 
     if len(items) > PROMPT_MAX_ITEMS:
         if len(arg) == 1:
             for item in items:
                 if item.name == arg:
-                    msg = await build_pet_image_message(item)
+                    msg = await build_pet_image_message(item, session)
                     await msg.finish()
 
         await matcher.finish(f"重名超过{PROMPT_MAX_ITEMS}个，请重新检索关键词！")
@@ -98,16 +105,44 @@ async def handle_pet_image(
     await enter_prompt(matcher, event, state, prompt, pet_image_resolver)
 
 
-async def build_pet_image_message(args: PromptItem[int]) -> MessageFactory:
-    image = await PetBodyImageGetter.get(str(args.value))
+async def build_pet_image_message(
+    args: PromptItem[int], session: SQLModelSession
+) -> MessageFactory:
     msg = MessageFactory()
-    msg += f"💎【{args.name}】\n"
+    resource_id = args.value
+    image = await PetBodyImageGetter.get(str(resource_id))
     msg += image
+    msg += f"💎【{args.name}】\n"
+    if (
+        model := session.exec(
+            select(PetSkinORM).where(PetSkinORM.resource_id == resource_id)
+        ).first()
+    ) is None:
+        return msg
+
+    def build_series_name() -> str:
+        if not model.series:
+            return "无"
+
+        series_name = model.series.name
+        if model.sub_type:
+            series_name += f" - {model.sub_type.name}"
+
+        return series_name
+
+    msg += f"所属精灵：{model.pet.name}\n"
+    if series_name := build_series_name():
+        msg += f"所属系列：{series_name}\n"
+    if model.card_price:
+        msg += f"礼卡价格：{model.card_price}\n"
+
     return msg
 
 
-async def pet_image_resolver(item: PromptItem[int], _1: Matcher, _2: object) -> None:
-    msg = await build_pet_image_message(item)
+async def pet_image_resolver(
+    item: PromptItem[int], _: Matcher, session: SQLModelSession
+) -> None:
+    msg = await build_pet_image_message(item, session)
     await msg.send()
 
 
