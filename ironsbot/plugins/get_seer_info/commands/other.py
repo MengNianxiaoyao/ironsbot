@@ -63,22 +63,6 @@ async def fetch_server_notice_text() -> str | None:
     return None
 
 
-# async def notify_server_open() -> None:
-#     text = await fetch_server_notice_text()
-#     if not text:
-#         target = TargetQQGroup(group_id=494873951)
-#         await MessageFactory("赛尔号开服了！").send_to(target)
-#         scheduler.remove_job("notify_server_open")
-
-
-# scheduler.add_job(
-#     notify_server_open,
-#     "interval",
-#     minutes=1,
-#     id="notify_server_open",
-#     replace_existing=True,
-# )
-
 server_info_matcher = matcher_group.on_fullmatch(
     ("开服查询", "开服了吗"), rule=no_reply()
 )

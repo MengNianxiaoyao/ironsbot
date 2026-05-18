@@ -1,8 +1,16 @@
+from dataclasses import dataclass
+from typing import Annotated, Any, TypeVar
+
 from nonebot.consts import CMD_ARG_KEY, PREFIX_KEY
 from nonebot.exception import FinishedException
+from nonebot.matcher import Matcher
 from nonebot.typing import T_State
+from pydantic import TypeAdapter, ValidationError
+from pydantic.fields import FieldInfo as PydanticFieldInfo
 
 from .rule import BOT_COMMAND_ARG_KEY
+
+T = TypeVar("T")
 
 
 def parse_string_arg(state: T_State) -> str:
@@ -26,3 +34,27 @@ def parse_int_arg(state: T_State) -> int:
         raise FinishedException
 
     return int(arg)
+
+
+async def validate_or_finish(
+    matcher: Matcher,
+    value: Any,
+    tp: type[T],
+    field: PydanticFieldInfo,
+    error_msg: str,
+) -> T:
+    """使用 Pydantic Field 校验值，失败时向用户发送错误提示并结束。"""
+    try:
+        return TypeAdapter(Annotated[tp, field]).validate_python(value)
+    except ValidationError:
+        await matcher.finish(error_msg)
+
+
+@dataclass(slots=True, frozen=True)
+class ValidatedIntArg:
+    field: PydanticFieldInfo
+    error_msg: str
+
+    async def __call__(self, matcher: Matcher, state: T_State) -> int:
+        raw = parse_int_arg(state)
+        return await validate_or_finish(matcher, raw, int, self.field, self.error_msg)

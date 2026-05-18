@@ -3,16 +3,16 @@ from datetime import datetime, timedelta, timezone
 from typing import NoReturn
 
 from nonebot.matcher import Matcher
-from nonebot.params import Depends
+from nonebot.typing import T_State
 
 from ironsbot.plugins.headless_seer.exception import SocketRecvError
 from ironsbot.plugins.headless_seer.game import PeakData, SeerGame
 from ironsbot.plugins.headless_seer.packets.user import MoreInfo, UserInfo
 from ironsbot.plugins.headless_seer.utils import split_bits
-from ironsbot.utils.parse_arg import parse_int_arg
 from ironsbot.utils.rule import no_reply, startswith_or_endswith
 
 from ..depends import GameClient
+from ..depends.arg_validator import PlayerIdArg
 from ..group import matcher_group
 
 player_matcher = matcher_group.on_message(
@@ -78,14 +78,24 @@ def _format_player_info(
     )
 
 
+PLAYER_ID_KEY = "player_id"
+
+
+@player_matcher.handle()
+async def validate_player_id(
+    state: T_State,
+    player_id: int = PlayerIdArg,
+) -> None:
+    state[PLAYER_ID_KEY] = player_id
+
+
 @player_matcher.handle()
 async def handle_player(
     matcher: Matcher,
-    player_id: int = Depends(parse_int_arg),
+    state: T_State,
     game: SeerGame = GameClient,
 ) -> NoReturn:
-    if not (50000 <= player_id <= 2000000000):
-        await matcher.finish("❌ 米米号范围必须在 50000~2000000000 之间！")
+    player_id: int = state[PLAYER_ID_KEY]
 
     user_info, more_info = await asyncio.gather(
         game.get_user_info(player_id),

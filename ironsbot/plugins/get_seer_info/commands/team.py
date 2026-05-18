@@ -1,14 +1,14 @@
 from typing import NoReturn
 
 from nonebot.matcher import Matcher
-from nonebot.params import Depends
+from nonebot.typing import T_State
 
 from ironsbot.plugins.headless_seer.game import SeerGame
 from ironsbot.plugins.headless_seer.packets.team import SimpleTeamInfo
-from ironsbot.utils.parse_arg import parse_int_arg
 from ironsbot.utils.rule import no_reply, startswith_or_endswith
 
 from ..depends import GameClient
+from ..depends.arg_validator import TeamIdArg
 from ..group import matcher_group
 
 team_matcher = matcher_group.on_message(
@@ -33,13 +33,24 @@ def _format_team_info(info: SimpleTeamInfo) -> str:
     )
 
 
+TEAM_ID_KEY = "team_id"
+
+
+@team_matcher.handle()
+async def validate_team_id(
+    state: T_State,
+    team_id: int = TeamIdArg,
+) -> None:
+    state[TEAM_ID_KEY] = team_id
+
+
 @team_matcher.handle()
 async def handle_team(
-    matcher: Matcher, team_id: int = Depends(parse_int_arg), game: SeerGame = GameClient
+    matcher: Matcher,
+    state: T_State,
+    game: SeerGame = GameClient,
 ) -> NoReturn:
-    if not (100000 <= team_id <= 2000000000):
-        await matcher.finish("❌ 战队ID范围必须在 100000~2000000000 之间！")
-
+    team_id: int = state[TEAM_ID_KEY]
     team_info = await game.get_team_info(team_id)
 
     await matcher.finish(_format_team_info(team_info))
