@@ -83,7 +83,9 @@ def get_supported_plugins(bot: "Bot") -> list["Plugin"]:
         (
             plugin
             for plugin in get_plugins().values()
-            if plugin.parent_plugin is None and is_supported(bot, plugin)
+            if plugin.parent_plugin is None
+            and is_supported(bot, plugin)
+            and plugin.matcher
         ),
         key=lambda x: x.metadata.name,  # type: ignore[union-attr]
     )
