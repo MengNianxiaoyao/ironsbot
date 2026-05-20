@@ -80,7 +80,7 @@ async def render_type_matchup(target: TypeCombinationORM) -> bytes:
 
     result = await template_to_pic(
         template_path=TEMPLATE_PATH,
-        template_name="template.html",
+        template_name="template.html.j2",
         templates={
             "type_name": target.name,
             "type_icon": icon_map[target.id],

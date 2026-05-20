@@ -105,7 +105,7 @@ async def render_peak_pool_vote(pools: list[VotePoolInput]) -> bytes:
 
     return await template_to_pic(
         template_path=[TEMPLATE_PATH, SHARED_PATH],
-        template_name="template.html",
+        template_name="template.html.j2",
         templates={
             "pools": pool_dicts,
             "generated_at": time.now(tz=time.TZ_CN).strftime("%Y-%m-%d %H:%M"),

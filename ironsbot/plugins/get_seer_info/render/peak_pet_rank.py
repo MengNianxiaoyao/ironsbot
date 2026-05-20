@@ -130,7 +130,7 @@ async def render_peak_pet_rank(
 
     return await template_to_pic(
         template_path=[TEMPLATE_PATH, SHARED_PATH],
-        template_name="template.html",
+        template_name="template.html.j2",
         templates={
             "title": title,
             "pick_ranks": pick_ranks,

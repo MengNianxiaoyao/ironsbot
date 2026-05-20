@@ -262,7 +262,7 @@ async def render_pet_info(pet: PetORM) -> bytes:
 
     result = await template_to_pic(
         template_path=TEMPLATE_PATH,
-        template_name="template.html",
+        template_name="template.html.j2",
         templates={
             "pet_name": pet.name,
             "pet_id": pet.id,

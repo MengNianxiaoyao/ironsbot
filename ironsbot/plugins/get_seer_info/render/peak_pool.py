@@ -104,7 +104,7 @@ async def render_peak_pool(
 
     result = await template_to_pic(
         template_path=[TEMPLATE_PATH, SHARED_PATH],
-        template_name="template.html",
+        template_name="template.html.j2",
         templates={
             "pools": pool_dicts,
             "pool_type": pool_type,
