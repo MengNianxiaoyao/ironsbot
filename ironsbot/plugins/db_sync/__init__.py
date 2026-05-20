@@ -1,6 +1,7 @@
 import asyncio
 import os
 import tempfile
+from collections.abc import Awaitable, Callable
 from typing import NamedTuple
 
 import httpx
@@ -14,16 +15,20 @@ from nonebot_plugin_apscheduler import scheduler
 
 from .manager import db_manager
 
+GetFingerprintFn = Callable[[httpx.AsyncClient], Awaitable[str]]
+
 
 class _SyncEntry(NamedTuple):
     sync_url: str
     sync_interval_minutes: int
+    get_fingerprint: GetFingerprintFn | None = None
 
 
 _driver = get_driver()
 _sync_locks: dict[str, asyncio.Lock] = {}
 _registered_syncs: dict[str, _SyncEntry] = {}
 _local_databases: set[str] = set()
+_fingerprints: dict[str, str] = {}
 
 
 def _get_lock(name: str) -> asyncio.Lock:
@@ -37,6 +42,7 @@ def register_database(
     *,
     sync_url: str,
     sync_interval_minutes: int = 60,
+    get_fingerprint: GetFingerprintFn | None = None,
 ) -> None:
     """注册一个从远程同步的内存数据库。供其他插件在模块级代码中调用。
 
@@ -44,13 +50,18 @@ def register_database(
     1. 在 db_manager 中注册内存引擎
     2. 添加定时同步任务
     3. 在启动时自动执行首次同步
+
+    若提供 ``get_fingerprint``，每次同步前会先调用该函数获取远程指纹，
+    与上次成功同步后的指纹对比；若相同则跳过下载。
     """
     if name in _registered_syncs or name in _local_databases:
         logger.warning(f"数据库 '{name}' 已注册，跳过重复注册")
         return
 
     db_manager.register(name)
-    _registered_syncs[name] = _SyncEntry(sync_url, sync_interval_minutes)
+    _registered_syncs[name] = _SyncEntry(
+        sync_url, sync_interval_minutes, get_fingerprint
+    )
 
     scheduler.add_job(
         sync_database,
@@ -80,7 +91,11 @@ def register_local_database(name: str, *, file_path: str) -> None:
 
 
 async def sync_database(name: str) -> None:
-    """从远程 URL 下载 SQLite 数据库并导入到内存中。"""
+    """从远程 URL 下载 SQLite 数据库并导入到内存中。
+
+    若注册时提供了 ``get_fingerprint``，会先获取远程指纹并与上次成功同步
+    的指纹对比；相同则跳过下载。指纹仅在同步成功后更新。
+    """
     entry = _registered_syncs.get(name)
     if not entry:
         return
@@ -91,22 +106,37 @@ async def sync_database(name: str) -> None:
         tmp_path = Path(tmp_name)
 
         try:
-            logger.info(f"开始从 {entry.sync_url} 同步数据库 '{name}'...")
+            async with httpx.AsyncClient(
+                follow_redirects=True,
+                timeout=httpx.Timeout(30.0, read=120.0),
+            ) as client:
+                fingerprint: str | None = None
+                if entry.get_fingerprint is not None:
+                    try:
+                        fingerprint = await entry.get_fingerprint(client)
+                        if fingerprint == _fingerprints.get(name):
+                            logger.debug(
+                                f"数据库 '{name}' 指纹未变化"
+                                f" ({fingerprint})，跳过同步"
+                            )
+                            return
+                    except Exception:  # noqa: BLE001
+                        logger.opt(exception=True).warning(
+                            f"获取数据库 '{name}' 指纹失败，将继续执行同步"
+                        )
 
-            content = bytearray()
-            async with (
-                httpx.AsyncClient(
-                    follow_redirects=True,
-                    timeout=httpx.Timeout(30.0, read=120.0),
-                ) as client,
-                client.stream("GET", entry.sync_url) as response,
-            ):
-                response.raise_for_status()
-                async for chunk in response.aiter_bytes(chunk_size=8192):
-                    content.extend(chunk)
+                logger.info(f"开始从 {entry.sync_url} 同步数据库 '{name}'...")
+                content = bytearray()
+                async with client.stream("GET", entry.sync_url) as response:
+                    response.raise_for_status()
+                    async for chunk in response.aiter_bytes(chunk_size=8192):
+                        content.extend(chunk)
 
             await tmp_path.write_bytes(bytes(content))
             db_manager.load_from_file(name, str(tmp_path))
+
+            if fingerprint is not None:
+                _fingerprints[name] = fingerprint
 
             size_mb = len(content) / (1024 * 1024)
             logger.info(f"数据库 '{name}' 已同步到内存，源文件大小: {size_mb:.2f} MB")

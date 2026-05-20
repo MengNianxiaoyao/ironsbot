@@ -4,6 +4,7 @@ import re
 from collections.abc import AsyncGenerator, Callable, Iterable
 from typing import Annotated, Any, Generic, Protocol, TypeVar
 
+import httpx
 from nonebot import logger, require
 from nonebot.matcher import Matcher
 from nonebot.params import Depends
@@ -34,7 +35,11 @@ from ..orm import BaseAliasORM, GemAliasORM, PetAliasORM
 
 require("ironsbot.plugins.db_sync")
 
-from ironsbot.plugins.db_sync import register_database, register_local_database
+from ironsbot.plugins.db_sync import (
+    GetFingerprintFn,
+    register_database,
+    register_local_database,
+)
 from ironsbot.plugins.db_sync.manager import db_manager
 from ironsbot.utils.parse_arg import parse_string_arg
 
@@ -42,11 +47,32 @@ _SEERAPI_DB = "seerapi"
 _ALIAS_DB = "aliases"
 
 
-def _register(name: str, sync_url: str, interval: int, local_path: str) -> None:
+def _register(
+    name: str,
+    sync_url: str,
+    interval: int,
+    local_path: str,
+    get_fingerprint: GetFingerprintFn | None = None,
+) -> None:
     if sync_url:
-        register_database(name, sync_url=sync_url, sync_interval_minutes=interval)
+        register_database(
+            name,
+            sync_url=sync_url,
+            sync_interval_minutes=interval,
+            get_fingerprint=get_fingerprint,
+        )
     else:
         register_local_database(name, file_path=local_path)
+
+
+async def _get_seerapi_fingerprint(client: httpx.AsyncClient) -> str:
+    response = await client.get(plugin_config.seerapi_fingerprint_url)
+    return response.text
+
+
+async def _get_alias_fingerprint(client: httpx.AsyncClient) -> str:
+    response = await client.get(plugin_config.alias_fingerprint_url)
+    return response.text
 
 
 _register(
@@ -54,12 +80,14 @@ _register(
     plugin_config.seerapi_sync_url,
     plugin_config.seerapi_sync_interval_minutes,
     plugin_config.seerapi_local_path,
+    _get_seerapi_fingerprint if plugin_config.seerapi_fingerprint_url else None,
 )
 _register(
     _ALIAS_DB,
     plugin_config.alias_sync_url,
     plugin_config.alias_sync_interval_minutes,
     plugin_config.alias_local_path,
+    _get_alias_fingerprint if plugin_config.alias_fingerprint_url else None,
 )
 
 _PINYIN_FTS_TABLE = "pinyin_fts"
