@@ -10,6 +10,7 @@ from nonebot.matcher import Matcher
 from nonebot.params import Depends
 from pypinyin import lazy_pinyin
 from seerapi_models import (
+    BattleEffectORM,
     ElementTypeORM,
     EquipORM,
     ErrorCodeORM,
@@ -657,3 +658,14 @@ TypeCombinationDataGetter = Getter(
 
 def GetTypeCombinationData() -> Any:
     return Depends(TypeCombinationDataGetter)
+
+
+BattleEffectDataGetter = Getter(
+    BattleEffectORM,
+    IdResolver(BattleEffectORM),
+    NameResolver(BattleEffectORM),
+)
+
+
+def GetBattleEffectData() -> Any:
+    return Depends(BattleEffectDataGetter)

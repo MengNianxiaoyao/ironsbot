@@ -97,3 +97,11 @@ TitleImageGetter = GetImage(
     client_getter=get_http_cache_client,
 )
 TitleImage = Depends(TitleImageGetter)
+
+
+BattleEffectImageGetter = GetImage(
+    "https://cnb.cool/SeerAPI/seer-unity-assets/-/git/raw/main/newseer/assets/art/ui/assets/battleeffect/abnormal/{}.png",
+    "https://raw.githubusercontent.com/SeerAPI/seer-unity-assets/refs/heads/main/newseer/assets/art/ui/assets/battleeffect/abnormal/{}.png",
+    client_getter=get_http_cache_client,
+)
+BattleEffectImage = Depends(BattleEffectImageGetter)
