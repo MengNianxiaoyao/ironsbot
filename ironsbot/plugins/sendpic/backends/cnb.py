@@ -1,32 +1,16 @@
-import base64
-from dataclasses import dataclass
+from contextlib import suppress
 from typing import Any
 
 from hishel.httpx import AsyncCacheClient
+from httpx import HTTPStatusError
 from typing_extensions import Self
+
+from ..backend import DirectoryListing, FileEntry
 
 _API_BASE = "https://api.cnb.cool"
 
 
-@dataclass(frozen=True, slots=True)
-class TreeEntry:
-    """目录条目。"""
-
-    name: str
-    path: str
-    sha: str
-    type: str
-
-
-@dataclass(frozen=True, slots=True)
-class DirInfo:
-    """目录信息，包含条目列表和条目数量。"""
-
-    entries: list[TreeEntry]
-    count: int
-
-
-class CnbApi:
+class CnbBackend:
     """CNB OpenAPI 客户端。
 
     复用单个 ``httpx.AsyncClient`` 以利用连接池。
@@ -56,18 +40,35 @@ class CnbApi:
     async def __aenter__(self) -> Self:
         return self
 
-    async def __aexit__(self, *_args: object) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: object,
+    ) -> None:
         await self.aclose()
 
     def _url(self, path: str) -> str:
         return f"{_API_BASE}/{path}"
+
+    async def count(self, path: str = "") -> int:
+        """获取目录下的文件数量（仅请求条目数，不解析内容）。"""
+
+        # 先获取目录下的count文件，如果存在则直接返回
+        with suppress(HTTPStatusError):
+            count = await self.get_file(f"{path}/count")
+            return int(count)
+
+        # 如果不存在则通过list_dir获取
+        listing = await self.list_dir(path)
+        return listing.count
 
     async def list_dir(
         self,
         path: str = "",
         *,
         ref: str | None = None,
-    ) -> DirInfo:
+    ) -> DirectoryListing:
         """获取指定目录下所有文件信息和文件数量。
 
         Parameters
@@ -77,11 +78,7 @@ class CnbApi:
         ref : str | None
             分支名或提交哈希，``None`` 表示默认分支。
         """
-        endpoint = (
-            f"{self._repo}/-/git/contents/{path}"
-            if path
-            else f"{self._repo}/-/git/contents"
-        )
+        endpoint = f"{self._repo}/-/git/contents/{path or ''}"
 
         params: dict[str, str] = {}
         if ref is not None:
@@ -95,15 +92,13 @@ class CnbApi:
         data: dict[str, Any] = resp.json()
 
         entries = [
-            TreeEntry(
+            FileEntry(
                 name=e["name"],
                 path=e["path"],
-                sha=e["sha"],
-                type=e["type"],
             )
             for e in (data.get("entries") or [])
         ]
-        return DirInfo(entries=entries, count=len(entries))
+        return DirectoryListing(entries=entries, count=len(entries))
 
     async def get_file(
         self,
@@ -180,10 +175,3 @@ class CnbApi:
                 return location
         resp.raise_for_status()
         return str(resp.url)
-
-
-def _decode_blob(data: dict[str, Any]) -> bytes:
-    content: str = data.get("content", "")
-    if data.get("encoding") == "base64":
-        return base64.b64decode(content)
-    return content.encode()
