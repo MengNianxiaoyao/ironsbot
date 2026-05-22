@@ -37,6 +37,7 @@ jobs:
               with:
                   images: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}
                   tags: |
+                      type=ref,event=tag,enable=${{ github.event_name == 'push' }}
                       type=semver,pattern={{version}},enable=${{ github.event_name == 'push' }}
                       type=semver,pattern={{major}}.{{minor}},enable=${{ github.event_name == 'push' }}
                       type=sha
