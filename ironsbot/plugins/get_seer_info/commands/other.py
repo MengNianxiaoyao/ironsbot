@@ -56,11 +56,15 @@ async def fetch_server_notice_text() -> str | None:
 
     for item in data:
         if item["type"] == 3:
-            text = item["text"]
-            # 需要删除所有标签
-            text = re.sub(r"<[^>]*>", "", text)
-            return text.replace("\\n", "\n")
+            return _clean_text(item["text"])
+
     return None
+
+
+def _clean_text(text: str) -> str:
+    """清理停服维护公告文本中的HTML标签和换行符"""
+    text = re.sub(r"<[^>]*>", "", text)
+    return text.replace("\\n", "\n")
 
 
 server_info_matcher = matcher_group.on_fullmatch(

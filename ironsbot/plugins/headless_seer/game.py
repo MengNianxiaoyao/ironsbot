@@ -1,7 +1,6 @@
 import asyncio
 import json
 import random
-import re
 import time
 from dataclasses import dataclass
 from enum import Enum
@@ -181,7 +180,7 @@ class SeerGame:
                 self._impl.disconnect()
                 self._impl = None
 
-            if await self._fetch_server_notice_text():
+            if await self._is_server_under_maintenance():
                 raise RuntimeError("服务器正在维护")
 
             address = await self._fetch_login_server_addr(self._login_server_url)
@@ -497,20 +496,14 @@ class SeerGame:
             raise ValueError("session 格式错误") from exc
 
     @staticmethod
-    async def _fetch_server_notice_text() -> str | None:
+    async def _is_server_under_maintenance() -> bool:
         """获取服务器停服维护公告文本，若没有则返回None，一般来说如果返回了文本则表示服务器正在维护"""
         async with httpx.AsyncClient() as client:
             resp = await client.get("https://unity-notice.61.com/unity_notice/")
             resp.raise_for_status()
             data = resp.json()
 
-        for item in data:
-            if item["type"] == 3:
-                text = item["text"]
-                # 需要删除所有标签
-                text = re.sub(r"<[^>]*>", "", text)
-                return text.replace("\\n", "\n")
-        return None
+        return any(item["type"] == 3 for item in data)
 
     @staticmethod
     def parse_jsonp(response_text: str, expected_callback: str | None = None) -> dict:
