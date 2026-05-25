@@ -3,9 +3,9 @@ from typing import TYPE_CHECKING, TypedDict
 
 from nonebot_plugin_htmlkit import template_to_pic
 
+from ironsbot.plugins.seer_data.image import ElementTypeImageGetter, PetHeadImageGetter
 from ironsbot.utils import time
 
-from ..depends.image import ElementTypeImageGetter, PetHeadImageGetter
 from ._common import TEMPLATES_PATH, to_data_uri
 
 if TYPE_CHECKING:

@@ -7,8 +7,7 @@ from nonebot.message import run_postprocessor
 
 from ironsbot.plugins.db_sync.manager import db_manager
 from ironsbot.plugins.headless_seer.exception import SocketRecvError
-
-from ..depends.db import ErrorCodeGetter
+from ironsbot.plugins.seer_data.db import ErrorCodeGetter
 
 __all__ = []
 

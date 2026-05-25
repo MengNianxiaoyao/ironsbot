@@ -7,6 +7,7 @@ from nonebot_plugin_saa import Image, MessageFactory
 from seerapi_models import PetORM, PetSkinORM
 from sqlmodel import select
 
+from ironsbot.plugins.seer_data.db import SQLModelSession
 from ironsbot.utils.parse_arg import parse_string_arg
 from ironsbot.utils.rule import no_reply, startswith_or_endswith
 
@@ -17,7 +18,6 @@ from ..depends import (
     PetDataGetter,
     SeerAPISession,
 )
-from ..depends.db import SQLModelSession
 from ..group import matcher_group
 from ..prompt import (
     Prompt,

@@ -8,10 +8,10 @@ from nonebot.matcher import Matcher
 from seerapi_models import ApiMetadataORM
 from sqlmodel import select
 
+from ironsbot.plugins.seer_data.image import PreviewImageGetter
 from ironsbot.utils.rule import no_reply
 
 from ..depends import SeerAPISession
-from ..depends.image import PreviewImageGetter
 from ..group import matcher_group
 
 preview_matcher = matcher_group.on_fullmatch("下周预告", rule=no_reply())

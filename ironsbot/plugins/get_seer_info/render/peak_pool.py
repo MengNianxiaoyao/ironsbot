@@ -6,7 +6,8 @@ from typing import TypedDict
 from nonebot_plugin_htmlkit import template_to_pic
 from seerapi_models import PeakExpertPoolORM, PeakPoolORM
 
-from ..depends.image import ElementTypeImageGetter, PetHeadImageGetter
+from ironsbot.plugins.seer_data.image import ElementTypeImageGetter, PetHeadImageGetter
+
 from ._cache import render_cache
 from ._common import TEMPLATES_PATH, to_data_uri
 

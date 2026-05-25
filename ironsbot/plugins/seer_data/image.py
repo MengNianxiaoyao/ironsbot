@@ -1,12 +1,9 @@
 from httpx import HTTPStatusError
-from nonebot import require
 from nonebot.params import Depends
 
-from ironsbot.utils.image import GetImage
-
-require("ironsbot.plugins.http_client")
-
+# require("ironsbot.plugins.http_client")
 from ironsbot.plugins.http_client import get_http_cache_client, get_http_origin_client
+from ironsbot.utils.image import GetImage
 
 
 async def _fallback_image(error: Exception) -> bytes:

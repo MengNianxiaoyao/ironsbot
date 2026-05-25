@@ -14,18 +14,18 @@ from seerapi_models import (
 )
 from sqlmodel import select
 
-from ironsbot.plugins.get_seer_info.depends.db import (
-    AllSessions,
-    Getter,
-    SuitDataGetter,
-    TitleDataGetter,
-    from_id_get_name,
-)
 from ironsbot.plugins.headless_seer.game import (
     PEAK_TYPE_NAME_MAP,
     PeakItemData,
     PeakType,
     SeerGame,
+)
+from ironsbot.plugins.seer_data.db import (
+    AllSessions,
+    Getter,
+    SuitDataGetter,
+    TitleDataGetter,
+    from_id_get_name,
 )
 from ironsbot.utils import time
 from ironsbot.utils.rule import no_reply

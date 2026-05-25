@@ -5,10 +5,7 @@ from nonebot_plugin_saa import MessageFactory
 from nonebot_plugin_saa.abstract_factories import FinishedException
 from seerapi_models import EquipORM, SuitORM, TitlePartORM
 
-from ironsbot.utils import build_sub_line
-from ironsbot.utils.rule import no_reply, startswith_or_endswith
-
-from ..depends.db import (
+from ironsbot.plugins.seer_data.db import (
     EquipDataGetter,
     GetEquipData,
     GetSuitData,
@@ -16,7 +13,14 @@ from ..depends.db import (
     SuitDataGetter,
     TitleDataGetter,
 )
-from ..depends.image import EquipImageGetter, SuitImageGetter, TitleImageGetter
+from ironsbot.plugins.seer_data.image import (
+    EquipImageGetter,
+    SuitImageGetter,
+    TitleImageGetter,
+)
+from ironsbot.utils import build_sub_line
+from ironsbot.utils.rule import no_reply, startswith_or_endswith
+
 from ..group import matcher_group
 from ..prompt import (
     Prompt,

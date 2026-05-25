@@ -9,7 +9,7 @@ from seerapi_models import GemCategoryORM, MintmarkClassCategoryORM, MintmarkORM
 from seerapi_models.common import SixAttributes
 from seerapi_models.mintmark import AbilityPartORM, SkillPartORM, UniversalPartORM
 
-from ironsbot.plugins.get_seer_info.depends.db import (
+from ironsbot.plugins.seer_data.db import (
     GemCategoryDataGetter,
     GetGemCategoryData,
 )

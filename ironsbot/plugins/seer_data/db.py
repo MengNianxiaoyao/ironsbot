@@ -5,7 +5,7 @@ from collections.abc import AsyncGenerator, Callable, Iterable
 from typing import Annotated, Any, Generic, Protocol, TypeVar
 
 import httpx
-from nonebot import logger, require
+from nonebot import logger
 from nonebot.matcher import Matcher
 from nonebot.params import Depends
 from pypinyin import lazy_pinyin
@@ -31,11 +31,7 @@ from sqlalchemy.exc import OperationalError
 from sqlmodel import Session as SQLModelSession
 from sqlmodel import and_, col, func, or_, select
 
-from ..config import plugin_config
-from ..orm import BaseAliasORM, GemAliasORM, PetAliasORM
-
-require("ironsbot.plugins.db_sync")
-
+# require("ironsbot.plugins.db_sync")
 from ironsbot.plugins.db_sync import (
     GetFingerprintFn,
     register_database,
@@ -43,6 +39,9 @@ from ironsbot.plugins.db_sync import (
 )
 from ironsbot.plugins.db_sync.manager import db_manager
 from ironsbot.utils.parse_arg import parse_string_arg
+
+from .config import plugin_config
+from .orm import BaseAliasORM, GemAliasORM, PetAliasORM
 
 _SEERAPI_DB = "seerapi"
 _ALIAS_DB = "aliases"

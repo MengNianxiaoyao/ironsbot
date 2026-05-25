@@ -11,6 +11,7 @@ from nonebot_plugin_saa import MessageFactory
 from seerapi_models.build_model import BaseResModel
 from typing_extensions import NamedTuple
 
+from ironsbot.plugins.seer_data.db import Getter, SQLModelSession
 from ironsbot.utils import build_sub_line
 from ironsbot.utils.matcher import (
     enter_prompt_loop as _enter_prompt_loop,
@@ -21,7 +22,6 @@ from ironsbot.utils.matcher import (
 )
 
 from .depends import SeerAPISession
-from .depends.db import Getter, SQLModelSession
 
 T = TypeVar("T")
 

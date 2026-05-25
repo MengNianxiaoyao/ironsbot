@@ -8,18 +8,19 @@ from seerapi_models.mintmark import PetMintmarkLink, SkillMintmarkLink
 from sqlalchemy.orm import object_session
 from sqlmodel import col, select
 
-from ironsbot.utils.analyze_parser import AnalyzeDescParser
-
-from ..depends.image import (
+from ironsbot.plugins.seer_data.image import (
     ElementTypeImageGetter,
     MintmarkBodyImageGetter,
     PetBodyImageGetter,
     PetHeadImageGetter,
 )
+from ironsbot.utils.analyze_parser import AnalyzeDescParser
+
 from ._cache import render_cache
 from ._common import TEMPLATES_PATH, to_data_uri
 
 TEMPLATE_PATH = TEMPLATES_PATH / "pet_info"
+SHARED_PATH = TEMPLATES_PATH / "_shared"
 
 STAT_BAR_MAX_WIDTH = 120
 STAT_MAX_VALUE = 200
@@ -261,7 +262,7 @@ async def render_pet_info(pet: PetORM) -> bytes:
     ]
 
     result = await template_to_pic(
-        template_path=TEMPLATE_PATH,
+        template_path=[TEMPLATE_PATH, SHARED_PATH],
         template_name="template.html.j2",
         templates={
             "pet_name": pet.name,

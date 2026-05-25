@@ -1,6 +1,9 @@
 import importlib
 
+from nonebot import require
 from nonebot.plugin import PluginMetadata
+
+require("ironsbot.plugins.seer_data")
 
 from .config import Config
 

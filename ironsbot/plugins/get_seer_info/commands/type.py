@@ -11,9 +11,12 @@ from ironsbot.plugins.get_seer_info.prompt import (
     enter_prompt,
     simple_prompt_resolver,
 )
+from ironsbot.plugins.seer_data.db import (
+    GetTypeCombinationData,
+    TypeCombinationDataGetter,
+)
 from ironsbot.utils.rule import no_reply, startswith_or_endswith
 
-from ..depends.db import GetTypeCombinationData, TypeCombinationDataGetter
 from ..group import matcher_group
 from ..render import render_type_matchup
 from ..type_calc import calc_attack_table, calc_defense_table, calc_type_multiplier

@@ -5,17 +5,17 @@ from nonebot.typing import T_State
 from nonebot_plugin_saa import MessageFactory
 from seerapi_models import BattleEffectORM
 
-from ironsbot.plugins.get_seer_info.depends.db import (
-    BattleEffectDataGetter,
-    GetBattleEffectData,
-)
-from ironsbot.plugins.get_seer_info.depends.image import BattleEffectImageGetter
 from ironsbot.plugins.get_seer_info.prompt import (
     Prompt,
     PromptItem,
     enter_prompt,
     simple_prompt_resolver,
 )
+from ironsbot.plugins.seer_data.db import (
+    BattleEffectDataGetter,
+    GetBattleEffectData,
+)
+from ironsbot.plugins.seer_data.image import BattleEffectImageGetter
 from ironsbot.utils.rule import no_reply, startswith_or_endswith
 
 from ..group import matcher_group

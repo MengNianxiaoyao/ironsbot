@@ -6,8 +6,8 @@ from seerapi_models.element_type import TypeCombinationORM
 from sqlalchemy.orm import object_session
 
 from ironsbot.plugins.get_seer_info.render._cache import render_cache
+from ironsbot.plugins.seer_data.image import ElementTypeImageGetter
 
-from ..depends.image import ElementTypeImageGetter
 from ..type_calc import calc_attack_table, calc_defense_table
 from ._common import TEMPLATES_PATH, to_data_uri
 
