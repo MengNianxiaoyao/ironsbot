@@ -1,3 +1,4 @@
+import base64
 from collections.abc import Awaitable, Callable
 
 from httpx import AsyncClient, HTTPStatusError, RequestError
@@ -72,3 +73,8 @@ class GetImage:
             return Text("❌获取图片失败！原因：参数不能为空")
 
         return await self.get(arg)
+
+
+def to_data_uri(data: bytes, mime_type: str = "image/png") -> str:
+    b64 = base64.b64encode(data).decode("ascii")
+    return f"data:{mime_type};base64,{b64}"
