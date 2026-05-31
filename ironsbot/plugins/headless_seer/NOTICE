@@ -1,6 +1,24 @@
+headless_seer 插件
+==================
+
+本插件整体以 GPL-3.0-or-later 授权（见同目录 LICENSE）。
+
+第三方代码出处
+--------------
+
+本插件中的 session 获取与登录数据包构建相关函数改写自以下项目：
+
+  项目：saixiaoxi
+  作者：Adai (@oldml)
+  地址：https://github.com/oldml/saixiaoxi
+  协议：MIT License
+
+该上游项目以 MIT 协议发布，依据 MIT 协议要求，保留其原始版权与许可声明如下：
+
+----------------------------------------------------------------------
 MIT License
 
-Copyright (c) 2025-2026 Nattsu39
+Copyright (c) 2025 Adai
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +37,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+----------------------------------------------------------------------

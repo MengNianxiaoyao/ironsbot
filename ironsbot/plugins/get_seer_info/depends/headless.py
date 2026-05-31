@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 from nonebot import require
 from nonebot.matcher import Matcher
 from nonebot.params import Depends

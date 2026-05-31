@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 import nonebot
 from nonebot.adapters.onebot.v11 import Adapter as ONEBOT_V11Adapter
 

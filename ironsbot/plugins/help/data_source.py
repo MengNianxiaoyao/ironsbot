@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """插件帮助信息发现与格式化。
 
 从 NoneBot 已加载的插件元信息中提取帮助文本，

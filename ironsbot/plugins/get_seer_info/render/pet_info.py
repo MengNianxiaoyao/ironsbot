@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 import asyncio
 from collections.abc import Callable
 from typing import Any, Literal, NamedTuple, TypedDict

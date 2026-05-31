@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """从 tables/ 目录下的 CSV 文件构建别名 SQLite 数据库。
 
 CSV 文件名（不含扩展名）即为数据库表名，每个 CSV 需包含 name 和 target_id 两列。

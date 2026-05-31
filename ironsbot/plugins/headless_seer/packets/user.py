@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 # public static void setForSimpleInfo(UserInfo info, ByteArray data)
 # {
 # 	info.hasSimpleInfo = true;

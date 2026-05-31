@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import Any, Generic, TypeAlias, TypeVar, cast, overload

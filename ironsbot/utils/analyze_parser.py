@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """赛尔号魂印/技能描述标签解析器
 
 将包含 ``[color=...]`` 和 ``[sprite name=...]`` 标签的Analyze描述文本

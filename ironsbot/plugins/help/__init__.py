@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """帮助插件
 
 通过读取插件元信息生成帮助信息，支持多轮对话选择。

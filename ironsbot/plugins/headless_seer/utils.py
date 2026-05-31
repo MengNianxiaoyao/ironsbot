@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 def split_bits(value: int, *bit_widths: int) -> tuple[int, ...]:
     """按位宽从高位到低位拆分整数，返回各字段值的元组。
 

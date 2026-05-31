@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 """属性克制倍率计算（纯计算逻辑，不涉及命令注册或渲染）。"""
 
 from seerapi_models.element_type import ElementTypeRelationORM, TypeCombinationORM

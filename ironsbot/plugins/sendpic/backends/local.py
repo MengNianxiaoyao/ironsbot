@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """本地文件系统图床后端。"""
 
 from pathlib import Path

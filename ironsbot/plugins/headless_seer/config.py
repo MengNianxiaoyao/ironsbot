@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 from nonebot import get_plugin_config
 from pydantic import BaseModel, Field
 

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 from nonebot import get_driver, logger
 
 from .config import plugin_config

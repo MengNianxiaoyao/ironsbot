@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 # ruff: noqa: N802
 
 import re

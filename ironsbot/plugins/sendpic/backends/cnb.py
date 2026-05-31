@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 from contextlib import suppress
 from typing import Any
 

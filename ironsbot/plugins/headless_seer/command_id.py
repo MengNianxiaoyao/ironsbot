@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 from typing import TYPE_CHECKING, Any, Final, NamedTuple
 
 from .type_hint import CommandID

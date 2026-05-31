@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 import random
 from collections.abc import AsyncGenerator, Callable
 from pathlib import Path

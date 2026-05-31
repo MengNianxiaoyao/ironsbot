@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 from hishel.httpx import AsyncCacheClient
 from httpx import AsyncClient
 from nonebot import get_driver, logger

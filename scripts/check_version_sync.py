@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """校验根目录 `__version__` 与 `pyproject.toml` 中 [project].version 一致。
 
 供 pre-commit 使用；也可手动运行: python scripts/check_version_sync.py

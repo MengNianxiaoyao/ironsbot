@@ -4,7 +4,7 @@
 # IronsBot
 赛尔号信息查询机器人👊🤖🔥
 
-[![Python](https://img.shields.io/badge/python->=3.10-blue.svg)](https://python.org) [![GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
+[![Python](https://img.shields.io/badge/python->=3.10-blue.svg)](https://python.org) [![License](https://img.shields.io/badge/license-GPL--3.0%20%2F%20MIT-blue.svg)](LICENSING.md)
 [![SeerAPI](https://img.shields.io/badge/SeerAPI-v104-blue.svg)](https://github.com/SeerAPI)
 </div>
 
@@ -121,7 +121,15 @@ ws://ironsbot:8080/onebot/v11/ws
 待补充
 
 ## 协议
-本项目采用 GPL-3.0 协议，请遵守协议内容。
+本项目采用**多协议**结构，详见 [LICENSING.md](LICENSING.md)：
+
+- **整机 / 完整仓库 / Docker 镜像**：作为"组合作品"对外分发时整体须遵守 **GPL-3.0-or-later**。
+- **`get_seer_info`、`headless_seer` 两个插件**：**GPL-3.0-or-later**（见各自目录下的 `LICENSE`）。
+- **其余全部代码**（其他插件、`ironsbot/utils`、`bot.py`、`docker/` 等）：**MIT**（见根目录 [LICENSE](LICENSE)）。
+
+也就是说，非插件模块可被单独提取并以 MIT 协议复用；但只要分发包含上述两个 GPL 插件的整机，整体仍受 GPL-3.0 约束。每个源文件顶部均带有 `SPDX-License-Identifier` 标识其协议归属。
+
+其中 `headless_seer` 的 session 获取与登录数据包构建函数改写自 [@oldml](https://github.com/oldml) 的 [saixiaoxi](https://github.com/oldml/saixiaoxi)（MIT），出处声明见 [`ironsbot/plugins/headless_seer/NOTICE`](ironsbot/plugins/headless_seer/NOTICE)。
 
 ## ❤️ 特别鸣谢
 - [@oldml](https://github.com/oldml)

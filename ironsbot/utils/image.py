@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 import base64
 from collections.abc import Awaitable, Callable
 

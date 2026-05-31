@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 import asyncio
 import os
 import tempfile

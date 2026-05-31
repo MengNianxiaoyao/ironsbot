@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """自定义 Matcher 会话控制工具。
 
 提供 :class:`PromptSessionManager` 管理 prompt 会话版本，

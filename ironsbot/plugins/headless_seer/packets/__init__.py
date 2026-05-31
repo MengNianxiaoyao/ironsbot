@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 from ..command_id import COMMAND_ID
 from ..core.register import packet_register
 from .login import AllSvrListInfo, RangeSvrInfo

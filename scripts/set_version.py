@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """将项目版本设为指定值：调用 `uv version` 更新 pyproject，并同步根目录 `__version__` 文件。"""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Final
 

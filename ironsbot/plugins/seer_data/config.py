@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 from nonebot import get_plugin_config
 from pydantic import BaseModel
 

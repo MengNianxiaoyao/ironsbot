@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """图床后端协议定义。
 
 提供统一的图床后端抽象，使插件能够兼容不同的图床实现（CNB、GitHub、S3 等）。

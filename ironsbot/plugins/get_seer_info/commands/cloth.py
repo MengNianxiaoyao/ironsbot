@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 from nonebot.adapters import Event
 from nonebot.matcher import Matcher
 from nonebot.typing import T_State

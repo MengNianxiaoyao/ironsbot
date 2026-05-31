@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 from typing import NoReturn
 
 from anyio import Path

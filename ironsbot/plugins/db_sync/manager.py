@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 import sqlite3
 from collections.abc import Callable, Generator
 from contextlib import ExitStack

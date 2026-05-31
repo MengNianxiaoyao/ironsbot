@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
 from ironsbot.plugins.seer_data.db import (
     GemCategoryDataGetter,
     GemDataGetter,

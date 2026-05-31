@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 from httpx import HTTPStatusError
 from nonebot.params import Depends
 

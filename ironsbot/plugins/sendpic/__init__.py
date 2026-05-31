@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 from nonebot.plugin import PluginMetadata
 
 from .config import Config, filter_enabled_configs

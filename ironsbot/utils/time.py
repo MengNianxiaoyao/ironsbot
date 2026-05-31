@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 from datetime import datetime, timedelta, timezone
 
 TZ_CN = timezone(timedelta(hours=8))

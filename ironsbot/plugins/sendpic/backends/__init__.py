@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 from .cnb import CnbBackend
 from .local import LocalBackend
 
